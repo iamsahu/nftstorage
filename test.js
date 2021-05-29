@@ -21,28 +21,30 @@ mutation MyMutation($caption:String,$fileURL:String,$name:String,$userAddress:St
   }
 `;
 
-exports.handler = async (event) => {
+async function main() {
 	// console.log(event.body);
 	// TODO implement
 
-	const body = JSON.parse(event.body);
-
+	// const body = JSON.parse(event.body);
+	let imageName =
+		"https://scontent-ort2-1.cdninstagram.com/v/t51.29350-15/194261179_1115936125554080_3706821304686187356_n.jpg?_nc_cat=102&ccb=1-3&_nc_sid=8ae9d6&_nc_ohc=RKDOQVNuCvwAX-gQrFl&_nc_ht=scontent-ort2-1.cdninstagram.com&oh=5283dacc3ddb1377e38fdc70c92b85c8&oe=60B68BCD";
 	//Download Image, Upload it to IPFS
 	const storage = new NFT.NFTStorage({ endpoint, token });
-	const response = await axios.get(body.SourceUrl, {
+	const response = await axios.get(imageName, {
 		responseType: "arraybuffer",
 	});
 	const buffer = Buffer.from(response.data, "utf-8");
 	console.log("Image downloaded");
-	let imageName = body.SourceUrl.split("?");
+	imageName = imageName.split("?");
 	imageName = imageName[0].split("/");
 	imageName = imageName[imageName.length - 1];
 	console.log("Image Name extracted");
+	console.log("Token:", process.env.NFTSTORAGETOKEN);
 	let metaURI = "";
 	try {
 		const metadata = await storage.store({
 			name: imageName,
-			description: body.caption,
+			description: "Test Caption",
 			image: new NFT.File([response.data], imageName, {
 				type: "image/jpg",
 			}),
@@ -143,4 +145,5 @@ exports.handler = async (event) => {
 		body: JSON.stringify("Hello from Lambda!"),
 	};
 	return result;
-};
+}
+main();
