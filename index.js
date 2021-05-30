@@ -117,26 +117,34 @@ exports.handler = async (event) => {
 		caption: body.caption,
 		fileURL: body.SourceUrl,
 		name: imageName,
-		userAddress: "test",
+		userAddress: body.address.toLowerCase(),
 	};
+	console.log("Query variables", qv);
 	try {
-		fetch(hgeEndpoint + "/v1/graphql", {
+		await fetch(hgeEndpoint + "/v1/graphql", {
 			method: "POST",
 			body: JSON.stringify({ query: query, variables: qv }),
 			headers: {
 				"Content-Type": "application/json",
-				"x-hasura-admin-secret": adminSecret,
+				// "x-hasura-admin-secret": adminSecret,
 			},
 		})
-			.then((res) => res.json())
+			.then((res) => {
+				console.log("Yo1");
+				res.json();
+
+				console.log(res);
+			})
 			.then((json) => {
+				console.log("Yo2");
 				console.log(json);
 				// callback(null, response2);
 			});
+		console.log("Query has finished");
 	} catch (error) {
 		console.log("Error Data Submission: ", error);
 	}
-
+	console.log("Database Updated!");
 	const result = {
 		statusCode: 200,
 		body: JSON.stringify("Hello from Lambda!"),

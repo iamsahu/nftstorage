@@ -39,7 +39,7 @@ async function main() {
 	imageName = imageName[0].split("/");
 	imageName = imageName[imageName.length - 1];
 	console.log("Image Name extracted");
-	console.log("Token:", process.env.NFTSTORAGETOKEN);
+	// console.log("Token:", process.env.NFTSTORAGETOKEN);
 	let metaURI = "";
 	try {
 		const metadata = await storage.store({
@@ -116,22 +116,26 @@ async function main() {
 		body: "success",
 	};
 	const qv = {
-		caption: imageName,
+		caption: imageName.toLowerCase(),
 		fileURL:
 			"https://scontent-ort2-1.cdninstagram.com/v/t51.29350-15/194261179_1115936125554080_3706821304686187356_n.jpg?_nc_cat=102&ccb=1-3&_nc_sid=8ae9d6&_nc_ohc=RKDOQVNuCvwAX-gQrFl&_nc_ht=scontent-ort2-1.cdninstagram.com&oh=5283dacc3ddb1377e38fdc70c92b85c8&oe=60B68BCD",
 		name: "test",
-		userAddress: "test",
+		userAddress: "0x4033fa14e9c72b8ab023911848b4041676d6f279",
 	};
+	console.log("Query variables", qv);
 	try {
 		fetch(hgeEndpoint + "/v1/graphql", {
 			method: "POST",
 			body: JSON.stringify({ query: query, variables: qv }),
 			headers: {
 				"Content-Type": "application/json",
-				"x-hasura-admin-secret": adminSecret,
+				// "x-hasura-admin-secret": adminSecret,
 			},
 		})
-			.then((res) => res.json())
+			.then((res) => {
+				res.json();
+				console.log(res);
+			})
 			.then((json) => {
 				console.log(json);
 				// callback(null, response2);
