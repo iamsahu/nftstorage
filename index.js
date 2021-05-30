@@ -12,8 +12,8 @@ const adminSecret = process.env.ADMIN_SECRET;
 const hgeEndpoint = process.env.HGE_ENDPOINT;
 
 const query = `
-mutation MyMutation($caption:String,$fileURL:String,$name:String,$userAddress:String) {
-    insert_test_schema_test_data(objects: [{caption: $caption, fileURL: $fileURL, name: $name, userAddress: $userAddress}]) {
+mutation MyMutation($caption:String,$fileURL:String,$name:String,$userAddress:String,$fileIPFS:String) {
+    insert_test_schema_test_data(objects: [{caption: $caption, fileURL: $fileURL, name: $name, userAddress: $userAddress,fileIPFS:$fileIPFS}]) {
       returning {
         id
       }
@@ -39,6 +39,8 @@ exports.handler = async (event) => {
 	imageName = imageName[imageName.length - 1];
 	console.log("Image Name extracted");
 	let metaURI = "";
+
+	//Upload the NFT
 	try {
 		const metadata = await storage.store({
 			name: imageName,
@@ -116,6 +118,7 @@ exports.handler = async (event) => {
 	const qv = {
 		caption: body.caption,
 		fileURL: body.SourceUrl,
+		fileIPFS: "ipfs://" + metaURI,
 		name: imageName,
 		userAddress: body.address.toLowerCase(),
 	};
